@@ -7,7 +7,6 @@ import { getGoogleEvents } from "../services/events.service";
 
 const Events: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [user, setUser] = useState<object | {}>({});
   const [code, setCode] = useState<string | null>(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ const Events: React.FC = () => {
           initialUserData?.token,
           response?.data?.data?.accessToken
         );
-        setUser(response?.data?.data);
         setLoading(false);
         navigate("/events", { state: { user: response?.data?.data } });
       }
