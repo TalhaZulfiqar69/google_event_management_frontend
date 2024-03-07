@@ -1,9 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Button, Flex, Stack, Heading } from "@chakra-ui/react";
+import {
+  Button,
+  Flex,
+  Stack,
+  Heading,
+  SimpleGrid,
+  Box,
+} from "@chakra-ui/react";
 import { authenticationWithGoogle } from "../services/auth.service";
-import { getUserEvents } from "../services/events.service";
+import { getUserEvents, disconnectCalendar } from "../services/events.service";
 import DataTable from "react-data-table-component";
 import moment from "moment";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+
 interface Row {
   attendees: [];
   createdAt: string;
@@ -19,12 +29,18 @@ interface Row {
 
 const Events: React.FC = () => {
   const [events, setEvents] = useState([]);
-
+  const navigate = useNavigate();
   const userDataFromStorage = localStorage.getItem("userInfo");
   const initialUserData = userDataFromStorage
     ? JSON.parse(userDataFromStorage)
     : {};
 
+  useEffect(() => {
+    if (!initialUserData?.token) {
+      navigate("/");
+      toast.error(`Authentication required`);
+    }
+  }, []);
   const handleGetUserEvents = async () => {
     try {
       const eventsData: any = await getUserEvents(
@@ -77,7 +93,17 @@ const Events: React.FC = () => {
   ];
 
   const data: Row[] = events;
-
+  const handleDisconnectCalendar = async () => {
+    try {
+      const response = await disconnectCalendar(initialUserData?.token);
+      if (response && response?.data?.success === true) {
+        handleGetUserEvents();
+        toast.success(`${response?.data?.message}`);
+      }
+    } catch (error: any) {
+      console.log(`${error}`);
+    }
+  };
   return (
     <Flex mt={24}>
       <Stack spacing={8} mx={"auto"}>
@@ -85,10 +111,23 @@ const Events: React.FC = () => {
           <Heading fontSize={"4xl"}>Events Module</Heading>
         </Stack>
         {!events?.length && (
-          <Button onClick={() => googleAuth()}> Connect Google Calendar</Button>
+          <Button onClick={() => googleAuth()}>Connect Google Calendar</Button>
         )}
         {events?.length && (
-          <DataTable columns={columns} data={data} pagination />
+          <>
+            <SimpleGrid columns={5} spacingX="40px" spacingY="20px">
+              <Box></Box>
+              <Box></Box>
+              <Box></Box>
+              <Box></Box>
+              <Box>
+                <Button onClick={() => handleDisconnectCalendar()}>
+                  Disconnect Calendar
+                </Button>
+              </Box>
+            </SimpleGrid>
+            <DataTable columns={columns} data={data} pagination />
+          </>
         )}
       </Stack>
     </Flex>

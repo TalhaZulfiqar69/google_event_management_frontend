@@ -58,23 +58,6 @@ export const signup = async (data: UserData): Promise<AxiosResponse> => {
   }
 };
 
-export const logout = async (token: string): Promise<AxiosResponse> => {
-  try {
-    const user = await axios.get(
-      `${process.env.REACT_APP_API_BASE_URL}/auth/logout`,
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-    return user;
-  } catch (error: any) {
-    return error.response.data;
-  }
-};
-
 export const signin = async (data: UserData): Promise<AxiosResponse> => {
   try {
     const user = await axios.post(

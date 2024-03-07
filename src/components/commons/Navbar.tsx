@@ -15,7 +15,6 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../services/auth.service";
 
 const Links = [{ name: "Events", path: "/events" }];
 
@@ -30,11 +29,8 @@ const WithAction: React.FC = () => {
 
   const handleLogoutUser = async () => {
     try {
-      const user: any = await logout(initialUserData?.token);
-      if (user && user.data.success === true) {
-        localStorage.removeItem("userInfo");
-        navigate("/login");
-      }
+      localStorage.removeItem("userInfo");
+      navigate("/login");
     } catch (error: any) {
       console.log(error.response.message);
     }
