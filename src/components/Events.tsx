@@ -72,7 +72,7 @@ const Events: React.FC = () => {
       console.log(`${error}`);
     }
   };
-  // Table columns
+  // Table columns:
   const columns = [
     {
       name: "Event Name",
