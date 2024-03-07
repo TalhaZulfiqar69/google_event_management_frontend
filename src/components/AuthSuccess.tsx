@@ -23,7 +23,7 @@ const Events: React.FC = () => {
   const fetchData = async (code: string) => {
     try {
       const response = await verifyGoogleIdentity(code);
-      if (response?.data?.data) {
+      if (response?.data?.data && response?.data?.data?.accessToken) {
         await getGoogleEvents(
           initialUserData?.token,
           response?.data?.data?.accessToken
